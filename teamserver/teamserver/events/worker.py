@@ -22,11 +22,15 @@ app = Celery(  # pylint: disable=invalid-name
 connect(DB_NAME, host=DB_HOST, port=DB_PORT)
 
 PWNBOARD = None
-if "PWNBOARD_CONFIG" in INTEGRATIONS:
+if "PWNBOARD_CONFIG" in INTEGRATIONS and INTEGRATIONS['PWNBOARD_CONFIG']['URL']:
     from teamserver.integrations.pwnboard import PwnboardIntegration
 
     PWNBOARD = PwnboardIntegration(INTEGRATIONS["PWNBOARD_CONFIG"])
 
+SYSLOG = None
+if "SYSLOG" in INTEGRATIONS and INTEGRATIONS["SYSLOG"]["host"]:
+    from teamserver.integrations.syslog import SyslogIntegration
+    SYSLOG = SyslogIntegration(INTEGRATIONS['SYSLOG'])
 
 @app.task
 def trigger_event(**kwargs):
@@ -35,5 +39,7 @@ def trigger_event(**kwargs):
     """
     event = kwargs.get("event")
     if event:
+        if isinstance(SYSLOG, Integration):
+            SYSLOG.run(kwargs)
         if isinstance(PWNBOARD, Integration):
             PWNBOARD.run(kwargs)

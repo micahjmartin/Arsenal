@@ -117,5 +117,6 @@ def read_api_key(api_key_file):
 
 
 INTEGRATIONS = {
-    "PWNBOARD_CONFIG": {"URL": os.environ.get("PWNBOARD_URL", "https://pwnboard.local/generic")}
+    "PWNBOARD_CONFIG": {"URL": os.environ.get("PWNBOARD_URL", None)},
+    "SYSLOG": {"host": os.environ.get("SYSLOG_HOST", None), "port": os.environ.get("SYSLOG_PORT", 5000)}
 }
